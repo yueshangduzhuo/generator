@@ -9,19 +9,24 @@ import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.InnerClass;
 import org.mybatis.generator.api.dom.java.InnerEnum;
 import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.internal.util.StringUtility;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
 
 /**
  * 自定义注解
- * @Author: zhangll
- * @Date: 2018/1/12 17:13
+ * @author CZH
  */
 public class GenCommentGenerator implements CommentGenerator {
+
+	private Properties systemPro;
+	private String currentDateStr;
 
 	@Override
 	public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
@@ -45,11 +50,29 @@ public class GenCommentGenerator implements CommentGenerator {
 
 	@Override
 	public void addClassAnnotation(InnerClass innerClass, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
-
+		StringBuilder sb = new StringBuilder();
+		innerClass.addJavaDocLine("/**");
+		sb.append(" * 描述:");
+		sb.append(introspectedTable.getFullyQualifiedTable()+"表的实体类");
+		innerClass.addJavaDocLine(sb.toString().replace("\n", " "));
+		sb.setLength(0);
+		sb.append(" * @version");
+		innerClass.addJavaDocLine(sb.toString().replace("\n", " "));
+		sb.setLength(0);
+		sb.append(" * @author:  ");
+		sb.append(systemPro.getProperty("user.name"));
+		innerClass.addJavaDocLine(sb.toString().replace("\n", " "));
+		sb.setLength(0);
+		sb.append(" * @Date: ");
+		sb.append(currentDateStr);
+		innerClass.addJavaDocLine(sb.toString().replace("\n", " "));
+		innerClass.addJavaDocLine(" */");
 	}
 
 	public GenCommentGenerator() {
 		super();
+		systemPro = System.getProperties();
+		currentDateStr = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date());
 	}
 
 	/**
@@ -61,7 +84,12 @@ public class GenCommentGenerator implements CommentGenerator {
 	@Override
 	public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
 		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-			field.addJavaDocLine("//" + introspectedColumn.getRemarks());
+			StringBuilder sb = new StringBuilder();
+			field.addJavaDocLine("/**");
+			sb.append(" * ");
+			sb.append(introspectedColumn.getRemarks());
+			field.addJavaDocLine(sb.toString().replace("\n", " "));
+			field.addJavaDocLine(" */");
 		}
 	}
 
@@ -73,23 +101,20 @@ public class GenCommentGenerator implements CommentGenerator {
 	 */
 	@Override
 	public void addGetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-//		StringBuilder sb = new StringBuilder();
-//		method.addJavaDocLine("/**");
-//		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//			sb.append(" * 获取");
-//			sb.append(introspectedColumn.getRemarks());
-//			method.addJavaDocLine(sb.toString());
-//			method.addJavaDocLine(" *");
-//		}
-//		sb.setLength(0);
-//		sb.append(" * @return ");
-//		sb.append(introspectedColumn.getActualColumnName());
-//		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//			sb.append(" - ");
-//			sb.append(introspectedColumn.getRemarks());
-//		}
-//		method.addJavaDocLine(sb.toString());
-//		method.addJavaDocLine(" */");
+		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+			StringBuilder sb = new StringBuilder();
+			method.addJavaDocLine("/**");
+			sb.append(" * ");
+			sb.append(introspectedColumn.getRemarks());
+			method.addJavaDocLine(sb.toString().replace("\n", " "));
+			sb.setLength(0);
+			sb.append(" * @return ");
+			sb.append(introspectedColumn.getActualColumnName());
+			sb.append(" ");
+			sb.append(introspectedColumn.getRemarks());
+			method.addJavaDocLine(sb.toString().replace("\n", " "));
+			method.addJavaDocLine(" */");
+		}
 
 	}
 
@@ -101,24 +126,21 @@ public class GenCommentGenerator implements CommentGenerator {
 	 */
 	@Override
 	public void addSetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-//		StringBuilder sb = new StringBuilder();
-//		method.addJavaDocLine("/**");
-//		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//			sb.append(" * 设置");
-//			sb.append(introspectedColumn.getRemarks());
-//			method.addJavaDocLine(sb.toString());
-//			method.addJavaDocLine(" *");
-//		}
-//		Parameter parm = method.getParameters().get(0);
-//		sb.setLength(0);
-//		sb.append(" * @param ");
-//		sb.append(parm.getName());
-//		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//			sb.append(" ");
-//			sb.append(introspectedColumn.getRemarks());
-//		}
-//		method.addJavaDocLine(sb.toString());
-//		method.addJavaDocLine(" */");
+		if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+			StringBuilder sb = new StringBuilder();
+			method.addJavaDocLine("/**");
+			sb.append(" * ");
+			sb.append(introspectedColumn.getRemarks());
+			method.addJavaDocLine(sb.toString().replace("\n", " "));
+			Parameter parm = method.getParameters().get(0);
+			sb.setLength(0);
+			sb.append(" * @param ");
+			sb.append(parm.getName());
+			sb.append(" ");
+			sb.append(introspectedColumn.getRemarks());
+			method.addJavaDocLine(sb.toString().replace("\n", " "));
+			method.addJavaDocLine(" */");
+		}
 	}
 
 	/**
@@ -145,6 +167,14 @@ public class GenCommentGenerator implements CommentGenerator {
 
 	@Override
 	public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable) {
+		StringBuilder sb = new StringBuilder();
+		innerClass.addJavaDocLine("/**");
+		sb.append(" * ");
+		sb.append(introspectedTable.getFullyQualifiedTable());
+		sb.append(" ");
+		sb.append(currentDateStr);
+		innerClass.addJavaDocLine(sb.toString().replace("\n", " "));
+		innerClass.addJavaDocLine(" */");
 	}
 
 	@Override
@@ -166,5 +196,6 @@ public class GenCommentGenerator implements CommentGenerator {
 
 	@Override
 	public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable, boolean markAsDoNotDelete) {
+
 	}
 }

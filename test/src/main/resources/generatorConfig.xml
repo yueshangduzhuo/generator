@@ -11,11 +11,11 @@
 		<!-- 生成的文件编码 -->
 		<property name="javaFileEncoding" value="utf-8"/>
 		<!-- 通过自定义插件类生成自定义注解和接口 -->
-		<!--<plugin type="com.zll.common.generator.GenPlugin">
+		<plugin type="com.zll.common.generator.GenPlugin">
 			<property name="mappers" value="com.zll.mapper.BaseMapper" />
-		</plugin>-->
+		</plugin>
 
-		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
+		<!--<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />-->
 
 		<commentGenerator>
 			<!-- 取消生成注释 -->
@@ -24,11 +24,11 @@
 		<!-- 数据库连接属性 -->
 		<jdbcConnection driverClass="${jdbc.driver}" connectionURL="${jdbc.url}" userId="${jdbc.username}" password="${jdbc.password}" />
 		<!-- 生成实体类配置 -->
-		<javaModelGenerator targetPackage="com.zll.model" targetProject="src/main/java" />
+		<javaModelGenerator targetPackage="com.zll.model" targetProject="${project}/src/main/java" />
 		<!-- 生成映射文件配置 -->
-		<sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources" />
+		<sqlMapGenerator targetPackage="mapper" targetProject="${project}/src/main/resources" />
 		<!-- 生成映射接口配置 -->
-		<javaClientGenerator targetPackage="com.zll.mapper" targetProject="src/main/java" type="XMLMAPPER" />
+		<javaClientGenerator targetPackage="com.zll.mapper" targetProject="${project}/src/main/java" type="XMLMAPPER" />
 		
 		<table tableName="%">
 			<!--mysql 配置 -->
